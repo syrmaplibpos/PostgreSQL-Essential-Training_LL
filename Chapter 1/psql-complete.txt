@@ -1,0 +1,16 @@
+SELECT version();
+
+SELECT now();
+
+CREATE DATABASE favoritecolors;
+
+\l
+
+\c favoritecolors
+
+CREATE DATABASE colors (ColorID int, ColorName char(20));
+
+INSERT INTO colors VALUES (1, 'red'), (2, 'blue'), (3, 'green');
+
+SELECT * FROM colors;
+
