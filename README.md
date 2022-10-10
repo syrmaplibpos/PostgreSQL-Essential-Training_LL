@@ -14,6 +14,11 @@ based on Course on Linkedin Learning
   - [Managing data](#managing-data)
     - [Table Indexes](#table-indexes)
     - [Automatically fill in default values](#automatically-fill-in-default-values)
+    - [Constrain acceptable input values](#constrain-acceptable-input-values)
+    - [challenge](#challenge)
+  - [Database Administration in PostgreSQL](#database-administration-in-postgresql)
+    - [Backup Strategy](#backup-strategy)
+  - [Conclusion](#conclusion)
 
 
 ## Getting started with PostgreSQL
@@ -179,4 +184,129 @@ CREATE INDEX products_product_id_idx
 ```
 
 ### Automatically fill in default values
+
+```
+ALTER TABLE IF EXISTS manufacturing.products
+    ALTER COLUMN category_id SET DEFAULT 4;
+```
+
+when most of the information have same value for a column
+
+### Constrain acceptable input values
+
+check constraint
+
+table-> constraints-> market = 'domestic' OR market = 'industrial', no in `don't validate`
+
+```
+ALTER TABLE IF EXISTS manufacturing.categories
+    ADD CONSTRAINT categories_market_check CHECK (market = 'domestic' OR market = 'industrial');
+```
+
+### challenge
+
+```
+CREATE INDEX employees_employee_id_idx
+    ON human_resources.employees USING btree
+    (employee_id ASC NULLS LAST)
+;
+```
+
+`ALTER COLUMN department_id SET DEFAULT 800;`
+
+```
+ALTER TABLE IF EXISTS human_resources.employees
+    ADD CONSTRAINT employees_hire_date_check CHECK (hire_date > '2020-01-01');
+```
+
+Don't validate ?: check old data or not
+
+```
+ALTER TABLE IF EXISTS human_resources.employees
+    ADD CONSTRAINT employees_hire_date_check CHECK (hire_date > '2020-01-01')
+    NOT VALID;
+```
+
+## Database Administration in PostgreSQL
+
+Roles
+
+Roles can be granted to specific users, so they can perform these specific tasks
+
+Postgres roles, superuser account, used to login to the server with
+
+The super user has the ability to do anything on the server, so it has the most priviledges of any user account
+
+This includes the ability to create new roles, and assign permissions
+
+```
+CREATE ROLE hr_manager WITH
+	LOGIN
+	NOSUPERUSER
+	NOCREATEDB
+	NOCREATEROLE
+	INHERIT
+	NOREPLICATION
+	CONNECTION LIMIT -1
+	PASSWORD 'xxxxxx';
+```
+
+
+-- View tables from the KinetEco database
+
+```
+SELECT * FROM manufacturing.products;
+SELECT * FROM human_resources.employees;
+```
+
+-- Impersonate the hr_manager
+
+```
+SET ROLE hr_manager;
+```
+
+-- Switch permissions back to posgres super user
+
+```
+RESET ROLE;
+```
+
+-- Give hr_manager permissions in database
+
+```
+GRANT USAGE ON SCHEMA human_resources TO hr_manager;
+GRANT SELECT ON ALL TABLES IN SCHEMA human_resources TO hr_manager;
+GRANT ALL ON ALL TABLES IN SCHEMA human_resources TO hr_manager;
+```
+
+-- Remove the hr_manager role from Postgres Server
+
+```
+RESET ROLE;
+REVOKE ALL ON ALL TABLES IN SCHEMA human_resources FROM hr_manager;
+REVOKE USAGE ON SCHEMA human_resources FROM hr_manager;
+DROP ROLE hr_manager;
+```
+
+
+
+### Backup Strategy
+
+pre-data: table structure and schemas of the database
+
+.backup
+
+tar
+
+## Conclusion
+
+Additional resources
+
+https://wiki.postgresql.org/wiki/Main_Page
+
+Learning SQL programming
+
+Relational Database Essential Training
+
+
 
