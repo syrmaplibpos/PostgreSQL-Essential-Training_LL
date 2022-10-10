@@ -57,7 +57,7 @@ Numeric, Monetary, Binary, Boolean, Date/Time, Character, Geometric
 
 Numeric: integer, smallint, bigint; numeric, decimal for numbers with decimal points; real, double precision for floating point values
 
-numeric(total,decimal)
+`numeric(total,decimal)`
 
 Character: fixed length character(n), char(n); state abbr char(2); variable length strings character varying(n) or varchar(n)
 
